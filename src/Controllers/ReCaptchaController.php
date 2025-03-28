@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Copyright (c) 2017 - present
  * LaravelGoogleRecaptcha - ReCaptchaController.php
@@ -12,21 +15,13 @@ namespace Biscolab\ReCaptcha\Controllers;
 
 use Illuminate\Routing\Controller;
 
-/**
- * Class ReCaptchaController
- * @package Biscolab\ReCaptcha\Controllers
- */
 class ReCaptchaController extends Controller
 {
+    public function validateV3(): bool|array
+    {
+        $token = request()
+            ->input(config('recaptcha.default_token_parameter_name', 'token'), '');
 
-	/**
-	 * @return array
-	 */
-	public function validateV3(): array
-	{
-
-		$token = request()->input(config('recaptcha.default_token_parameter_name', 'token'), '');
-
-		return recaptcha()->validate($token);
-	}
+        return recaptcha()->validate($token);
+    }
 }

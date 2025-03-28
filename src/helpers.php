@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright (c) 2017 - present
  * LaravelGoogleRecaptcha - helpers.php
@@ -12,9 +14,6 @@
 use Biscolab\ReCaptcha\Facades\ReCaptcha;
 
 if (!function_exists('recaptcha')) {
-    /**
-     * @return Biscolab\ReCaptcha\ReCaptchaBuilder|\Biscolab\ReCaptcha\ReCaptchaBuilderV2|\Biscolab\ReCaptcha\ReCaptchaBuilderInvisible|\Biscolab\ReCaptcha\ReCaptchaBuilderV3
-     */
     function recaptcha(): \Biscolab\ReCaptcha\ReCaptchaBuilder
     {
 
@@ -27,15 +26,10 @@ if (!function_exists('recaptcha')) {
  * Write script HTML tag in you HTML code
  * Insert before </head> tag
  *
- * @param $config ['form_id'] required if you are using invisible ReCaptcha
+ * @param [ $config'form_id'] required if you are using invisible ReCaptcha
  */
 if (!function_exists('htmlScriptTagJsApi')) {
 
-    /**
-     * @param array|null $config
-     *
-     * @return string
-     */
     function htmlScriptTagJsApi(?array $config = []): string
     {
 
@@ -50,19 +44,11 @@ if (!function_exists('htmlScriptTagJsApi')) {
  *
  * Warning! Using only with ReCAPTCHA INVISIBLE
  *
- * @param $buttonInnerHTML What you want to write on the submit button
+ * @param What $button_label you want to write on the submit button
  */
 if (!function_exists('htmlFormButton')) {
-
-    /**
-     * @param null|string $button_label
-     * @param array|null  $properties
-     *
-     * @return string
-     */
     function htmlFormButton(?string $button_label = 'Submit', ?array $properties = []): string
     {
-
         return ReCaptcha::htmlFormButton($button_label, $properties);
     }
 }
@@ -75,15 +61,9 @@ if (!function_exists('htmlFormButton')) {
  * Warning! Using only with ReCAPTCHA v2
  */
 if (!function_exists('htmlFormSnippet')) {
-
-    /**
-     * @param null|array $attributes
-     * @return string
-     */
     function htmlFormSnippet(?array $attributes = []): string
     {
-
-        return ReCaptcha::htmlFormSnippet($attributes);
+        return ReCaptcha::htmlFormSnippet();
     }
 }
 
@@ -93,13 +73,8 @@ if (!function_exists('htmlFormSnippet')) {
  * Warning! Using only with ReCAPTCHA invisible
  */
 if (!function_exists('getFormId')) {
-
-    /**
-     * @return string
-     */
     function getFormId(): string
     {
-
         return ReCaptcha::getFormId();
     }
 }
@@ -109,13 +84,8 @@ if (!function_exists('getFormId')) {
  * Use V2 (checkbox and invisible)
  */
 if (!function_exists('recaptchaRuleName')) {
-
-    /**
-     * @return string
-     */
     function recaptchaRuleName(): string
     {
-
         return \Biscolab\ReCaptcha\ReCaptchaBuilder::DEFAULT_RECAPTCHA_RULE_NAME;
     }
 }
@@ -125,13 +95,8 @@ if (!function_exists('recaptchaRuleName')) {
  * Use V2 (checkbox and invisible)
  */
 if (!function_exists('recaptchaFieldName')) {
-
-    /**
-     * @return string
-     */
     function recaptchaFieldName(): string
     {
-
         return \Biscolab\ReCaptcha\ReCaptchaBuilder::DEFAULT_RECAPTCHA_FIELD_NAME;
     }
 }

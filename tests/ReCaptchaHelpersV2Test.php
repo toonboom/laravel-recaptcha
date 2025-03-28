@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright (c) 2017 - present
  * LaravelGoogleRecaptcha - ReCaptchaHelpersV2Test.php
@@ -16,26 +18,27 @@ use Biscolab\ReCaptcha\ReCaptchaBuilderV2;
 
 class ReCaptchaHelpersV2Test extends TestCase
 {
-
     /**
      * @test
      */
-    public function testHtmlScriptTagJsApiCalledByFacade()
+    public function testHtmlScriptTagJsApiCalledByFacade(): void
     {
-
         ReCaptcha::shouldReceive('htmlScriptTagJsApi')
             ->once()
-            ->with(["key" => "val"]);
+            ->with([
+                "key" => "val",
+            ]);
 
-        htmlScriptTagJsApi(["key" => "val"]);
+        htmlScriptTagJsApi([
+            "key" => "val",
+        ]);
     }
 
     /**
      * @test
      */
-    public function testHtmlFormSnippetCalledByFacade()
+    public function testHtmlFormSnippetCalledByFacade(): void
     {
-
         ReCaptcha::shouldReceive('htmlFormSnippet')
             ->once();
 
@@ -45,9 +48,8 @@ class ReCaptchaHelpersV2Test extends TestCase
     /**
      * @test
      */
-    public function testTagAttributes()
+    public function testTagAttributes(): void
     {
-
         $recaptcha = \recaptcha();
 
         $tag_attributes = $recaptcha->getTagAttributes();
@@ -72,16 +74,15 @@ class ReCaptchaHelpersV2Test extends TestCase
     /**
      * @test
      */
-    public function testExpectReCaptchaInstanceOfReCaptchaBuilderV2()
+    public function testExpectReCaptchaInstanceOfReCaptchaBuilderV2(): void
     {
-
         $this->assertInstanceOf(ReCaptchaBuilderV2::class, \recaptcha());
     }
 
     /**
      * @expectedException     \Error
      */
-    public function testExpectExceptionWhenGetFormIdFunctionIsCalled()
+    public function testExpectExceptionWhenGetFormIdFunctionIsCalled(): void
     {
         $this->expectException('\Error');
         getFormId();
@@ -90,10 +91,10 @@ class ReCaptchaHelpersV2Test extends TestCase
     /**
      * @test
      */
-    public function testHtmlFormSnippet()
+    public function testHtmlFormSnippet(): void
     {
-
-        $html_snippet = \recaptcha()->htmlFormSnippet();
+        $html_snippet = \recaptcha()
+            ->htmlFormSnippet();
         $this->assertEquals(
             '<div class="g-recaptcha" data-callback="callbackFunction" data-error-callback="errorCallbackFunction" data-expired-callback="expiredCallbackFunction" data-sitekey="api_site_key" data-size="compact" data-tabindex="2" data-theme="dark" id="recaptcha-element"></div>',
             $html_snippet
@@ -103,18 +104,18 @@ class ReCaptchaHelpersV2Test extends TestCase
     /**
      * @test
      */
-    public function testHtmlFormSnippetOverridesDefaultAttributes()
+    public function testHtmlFormSnippetOverridesDefaultAttributes(): void
     {
-
-        $html_snippet = \recaptcha()->htmlFormSnippet([
-            "theme" => "light",
-            "size" => "normal",
-            "tabindex" => "3",
-            "callback" => "callbackFunctionNew",
-            "expired-callback" => "expiredCallbackFunctionNew",
-            "error-callback" => "errorCallbackFunctionNew",
-            "not-allowed-attribute" => "error",
-        ]);
+        $html_snippet = \recaptcha()
+            ->htmlFormSnippet([
+                "theme" => "light",
+                "size" => "normal",
+                "tabindex" => "3",
+                "callback" => "callbackFunctionNew",
+                "expired-callback" => "expiredCallbackFunctionNew",
+                "error-callback" => "errorCallbackFunctionNew",
+                "not-allowed-attribute" => "error",
+            ]);
         $this->assertEquals(
             '<div class="g-recaptcha" data-callback="callbackFunctionNew" data-error-callback="errorCallbackFunctionNew" data-expired-callback="expiredCallbackFunctionNew" data-sitekey="api_site_key" data-size="normal" data-tabindex="3" data-theme="light" id="recaptcha-element"></div>',
             $html_snippet
@@ -124,7 +125,7 @@ class ReCaptchaHelpersV2Test extends TestCase
     /**
      * @test
      */
-    public function testCleanAttributesReturnsOnlyAllowedAttributes()
+    public function testCleanAttributesReturnsOnlyAllowedAttributes(): void
     {
         $attributes = ReCaptchaBuilderV2::cleanAttributes([
             "theme" => "theme",
@@ -147,13 +148,14 @@ class ReCaptchaHelpersV2Test extends TestCase
     /**
      * @test
      */
-    public function testHtmlFormSnippetKeepsDefaultConfigValuesUnlessOtherwiseStated()
+    public function testHtmlFormSnippetKeepsDefaultConfigValuesUnlessOtherwiseStated(): void
     {
-        $html_snippet = \recaptcha()->htmlFormSnippet([
-            'callback'         => 'callbackFunction',
-            'expired-callback' => 'expiredCallbackFunction',
-            'error-callback'   => 'errorCallbackFunction',
-        ]);
+        $html_snippet = \recaptcha()
+            ->htmlFormSnippet([
+                'callback' => 'callbackFunction',
+                'expired-callback' => 'expiredCallbackFunction',
+                'error-callback' => 'errorCallbackFunction',
+            ]);
         $this->assertEquals(
             '<div class="g-recaptcha" data-callback="callbackFunction" data-error-callback="errorCallbackFunction" data-expired-callback="expiredCallbackFunction" data-sitekey="api_site_key" data-size="compact" data-tabindex="2" data-theme="dark" id="recaptcha-element"></div>',
             $html_snippet
@@ -164,21 +166,18 @@ class ReCaptchaHelpersV2Test extends TestCase
      * Define environment setup.
      *
      * @param  \Illuminate\Foundation\Application $app
-     *
-     * @return void
      */
     protected function getEnvironmentSetUp($app)
     {
-
         $app['config']->set('recaptcha.api_site_key', 'api_site_key');
         $app['config']->set('recaptcha.version', 'v2');
         $app['config']->set('recaptcha.tag_attributes', [
-            'theme'            => 'dark',
-            'size'             => 'compact',
-            'tabindex'         => '2',
-            'callback'         => 'callbackFunction',
+            'theme' => 'dark',
+            'size' => 'compact',
+            'tabindex' => '2',
+            'callback' => 'callbackFunction',
             'expired-callback' => 'expiredCallbackFunction',
-            'error-callback'   => 'errorCallbackFunction',
+            'error-callback' => 'errorCallbackFunction',
         ]);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright (c) 2017 - present
  * LaravelGoogleRecaptcha - ReCaptchaTest.php
@@ -17,195 +19,176 @@ use Biscolab\ReCaptcha\ReCaptchaBuilderInvisible;
 use Biscolab\ReCaptcha\ReCaptchaBuilderV2;
 use Biscolab\ReCaptcha\ReCaptchaBuilderV3;
 
-/**
- * Class ReCaptchaTest
- * @package Biscolab\ReCaptcha\Tests
- */
 class ReCaptchaTest extends TestCase
 {
+    /**
+     * @var ReCaptchaBuilderInvisible
+     */
+    protected $recaptcha_invisible;
 
-	/**
-	 * @var ReCaptchaBuilderInvisible
-	 */
-	protected $recaptcha_invisible = null;
+    /**
+     * @var ReCaptchaBuilderV2
+     */
+    protected $recaptcha_v2;
 
-	/**
-	 * @var ReCaptchaBuilderV2
-	 */
-	protected $recaptcha_v2 = null;
+    /**
+     * @var ReCaptchaBuilderV3
+     */
+    protected $recaptcha_v3;
 
-	/**
-	 * @var ReCaptchaBuilderV3
-	 */
-	protected $recaptcha_v3 = null;
+    /**
+     * @tests
+     */
+    public function testHtmlScriptTagJsApiGetHtmlScriptTag(): void
+    {
+        $r = ReCaptcha::htmlScriptTagJsApi();
+        $this->assertEquals('<script src="https://www.google.com/recaptcha/api.js" async defer></script>', $r);
+    }
 
-	/**
-	 * @tests
-	 */
-	public function testHtmlScriptTagJsApiGetHtmlScriptTag()
-	{
+    /**
+     * @test
+     */
+    public function testReCaptchaInvisibleHtmlFormButtonDefault(): void
+    {
+        $recaptcha = $this->recaptcha_invisible;
+        $html_button = $recaptcha->htmlFormButton();
+        $this->assertEquals(
+            '<button class="g-recaptcha" data-callback="biscolabLaravelReCaptcha" data-sitekey="api_site_key">Submit</button>',
+            $html_button
+        );
+    }
 
-		$r = ReCaptcha::htmlScriptTagJsApi();
-		$this->assertEquals('<script src="https://www.google.com/recaptcha/api.js" async defer></script>', $r);
-	}
+    /**
+     * @test
+     */
+    public function testReCaptchaInvisibleHtmlFormButtonCustom(): void
+    {
+        $recaptcha = $this->recaptcha_invisible;
+        $html_button = $recaptcha->htmlFormButton('Custom Text');
+        $this->assertEquals(
+            '<button class="g-recaptcha" data-callback="biscolabLaravelReCaptcha" data-sitekey="api_site_key">Custom Text</button>',
+            $html_button
+        );
+    }
 
-	/**
-	 * @test
-	 */
-	public function testReCaptchaInvisibleHtmlFormButtonDefault()
-	{
+    /**
+     * @test
+     */
+    public function testReCaptchaV2HtmlFormSnippet(): void
+    {
+        $recaptcha = $this->recaptcha_v2;
+        $html_snippet = $recaptcha->htmlFormSnippet();
+        $this->assertEquals(
+            '<div class="g-recaptcha" data-sitekey="api_site_key" data-size="normal" data-theme="light" id="recaptcha-element"></div>',
+            $html_snippet
+        );
+    }
 
-		$recaptcha = $this->recaptcha_invisible;
-		$html_button = $recaptcha->htmlFormButton();
-		$this->assertEquals(
-			'<button class="g-recaptcha" data-callback="biscolabLaravelReCaptcha" data-sitekey="api_site_key">Submit</button>',
-			$html_button
-		);
-	}
+    /**
+     * @test
+     * @expectedException     \Error
+     */
+    public function testReCaptchaInvisibleHtmlFormSnippetShouldThrowError(): void
+    {
+        $this->expectException('\Error');
+        $this->recaptcha_invisible->htmlFormSnippet();
+    }
 
-	/**
-	 * @test
-	 */
-	public function testReCaptchaInvisibleHtmlFormButtonCustom()
-	{
+    /**
+     * @test
+     */
+    public function testSkipByIpAndReturnArrayReturnsDefaultArray(): void
+    {
+        $mock = $this->getMockBuilder(ReCaptchaBuilder::class)
+            ->setConstructorArgs(["api_site_key", "api_secret_key"])
+            ->onlyMethods(['returnArray'])
+            ->getMock();
 
-		$recaptcha = $this->recaptcha_invisible;
-		$html_button = $recaptcha->htmlFormButton('Custom Text');
-		$this->assertEquals(
-			'<button class="g-recaptcha" data-callback="biscolabLaravelReCaptcha" data-sitekey="api_site_key">Custom Text</button>',
-			$html_button
-		);
-	}
+        $mock->method('returnArray')
+            ->willReturn(true);
 
-	/**
-	 * @test
-	 */
-	public function testReCaptchaV2HtmlFormSnippet()
-	{
+        $this->setSkipByIp($this->recaptcha_v3, true);
 
-		$recaptcha = $this->recaptcha_v2;
-		$html_snippet = $recaptcha->htmlFormSnippet();
-		$this->assertEquals('<div class="g-recaptcha" data-sitekey="api_site_key" data-size="normal" data-theme="light" id="recaptcha-element"></div>', $html_snippet);
-	}
+        $validate = $this->recaptcha_v3->validate("");
 
-	/**
-	 * @test
-	 * @expectedException     \Error
-	 */
-	public function testReCaptchaInvisibleHtmlFormSnippetShouldThrowError()
-	{
-		$this->expectException('\Error');
-		$this->recaptcha_invisible->htmlFormSnippet();
-	}
+        $this->assertEquals([
+            "skip_by_ip" => true,
+            "score" => 0.9,
+            "success" => true,
+        ], $validate);
+    }
 
-	/**
-	 * @test
-	 */
-	public function testSkipByIpAndReturnArrayReturnsDefaultArray()
-	{
+    /**
+     * @test
+     */
+    public function testSkipByIpReturnsValidResponse(): void
+    {
+        $this->setSkipByIp($this->recaptcha_invisible, true);
+        $validate = $this->recaptcha_invisible->validate("");
 
-		$mock = $this->getMockBuilder(ReCaptchaBuilder::class)
-			->setConstructorArgs([
-				"api_site_key",
-				"api_secret_key"
-			])
-			->setMethods([
-				'returnArray'
-			])
-			->getMock();
+        $this->assertTrue($validate);
+    }
 
-		$mock->method('returnArray')
-			->willReturn(true);
+    /**
+     * @test
+     */
+    public function testDefaultCurlTimeout(): void
+    {
+        $this->assertEquals($this->recaptcha_invisible->getCurlTimeout(), ReCaptchaBuilder::DEFAULT_CURL_TIMEOUT);
+        $this->assertEquals($this->recaptcha_v2->getCurlTimeout(), ReCaptchaBuilder::DEFAULT_CURL_TIMEOUT);
+        $this->assertEquals($this->recaptcha_v3->getCurlTimeout(), ReCaptchaBuilder::DEFAULT_CURL_TIMEOUT);
+    }
 
-		$this->setSkipByIp($this->recaptcha_v3, true);
+    /**
+     * @test
+     * @expectedException     \Error
+     */
+    public function testReCaptchaV2htmlFormButtonShouldThrowError(): void
+    {
+        $this->expectException('\Error');
+        $this->recaptcha_v2->htmlFormButton();
+    }
 
-		$validate = $this->recaptcha_v3->validate("");
+    /**
+     * @test
+     */
+    public function testRecaptchaFieldNameHelperReturnsReCaptchaBuilderDefaultFieldName(): void
+    {
+        $this->assertEquals(ReCaptchaBuilder::DEFAULT_RECAPTCHA_FIELD_NAME, recaptchaFieldName());
+    }
 
-		$this->assertEquals([
-			"skip_by_ip" => true,
-			"score"      => 0.9,
-			"success"    => true
-		], $validate);
-	}
+    /**
+     * @test
+     */
+    public function testRecaptchaRuleNameHelperReturnsReCaptchaBuilderDefaultRuleName(): void
+    {
+        $this->assertEquals(ReCaptchaBuilder::DEFAULT_RECAPTCHA_RULE_NAME, recaptchaRuleName());
+    }
 
-	/**
-	 * @test
-	 */
-	public function testSkipByIpReturnsValidResponse()
-	{
+    /**
+     * @test
+     */
+    public function testDefaultRecaptchaApiDomainIsGoogleDotCom(): void
+    {
+        $this->assertEquals("www.google.com", $this->recaptcha_v2->getApiDomain());
+        $this->assertEquals("www.google.com", $this->recaptcha_invisible->getApiDomain());
+        $this->assertEquals("www.google.com", $this->recaptcha_v3->getApiDomain());
+    }
 
-		$this->setSkipByIp($this->recaptcha_invisible, true);
-		$validate = $this->recaptcha_invisible->validate("");
+    protected function setSkipByIp(ReCaptchaBuilder $builder, bool $value)
+    {
+        $reflection = new \ReflectionClass($builder);
+        $reflection_property = $reflection->getProperty('skip_by_ip');
+        $reflection_property->setAccessible(true);
+        $reflection_property->setValue($builder, $value);
+    }
 
-		$this->assertTrue($validate);
-	}
+    protected function setUp(): void
+    {
+        parent::setUp();
 
-	/**
-	 * @test
-	 */
-	public function testDefaultCurlTimeout()
-	{
-
-		$this->assertEquals($this->recaptcha_invisible->getCurlTimeout(), ReCaptchaBuilder::DEFAULT_CURL_TIMEOUT);
-		$this->assertEquals($this->recaptcha_v2->getCurlTimeout(), ReCaptchaBuilder::DEFAULT_CURL_TIMEOUT);
-		$this->assertEquals($this->recaptcha_v3->getCurlTimeout(), ReCaptchaBuilder::DEFAULT_CURL_TIMEOUT);
-	}
-
-	/**
-	 * @test
-	 * @expectedException     \Error
-	 */
-	public function testReCaptchaV2htmlFormButtonShouldThrowError()
-	{
-		$this->expectException('\Error');
-		$this->recaptcha_v2->htmlFormButton();
-	}
-
-	/**
-	 * @test
-	 */
-	public function testRecaptchaFieldNameHelperReturnsReCaptchaBuilderDefaultFieldName()
-	{
-		$this->assertEquals(ReCaptchaBuilder::DEFAULT_RECAPTCHA_FIELD_NAME, recaptchaFieldName());
-	}
-
-	/**
-	 * @test
-	 */
-	public function testRecaptchaRuleNameHelperReturnsReCaptchaBuilderDefaultRuleName()
-	{
-		$this->assertEquals(ReCaptchaBuilder::DEFAULT_RECAPTCHA_RULE_NAME, recaptchaRuleName());
-	}
-
-	/**
-	 * @test
-	 */
-	public function testDefaultRecaptchaApiDomainIsGoogleDotCom()
-	{
-		$this->assertEquals("www.google.com", $this->recaptcha_v2->getApiDomain());
-		$this->assertEquals("www.google.com", $this->recaptcha_invisible->getApiDomain());
-		$this->assertEquals("www.google.com", $this->recaptcha_v3->getApiDomain());
-	}
-
-	protected function setSkipByIp(ReCaptchaBuilder $builder, bool $value)
-	{
-
-		$reflection = new \ReflectionClass($builder);
-		$reflection_property = $reflection->getProperty('skip_by_ip');
-		$reflection_property->setAccessible(true);
-		$reflection_property->setValue($builder, $value);
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	protected function setUp(): void
-	{
-
-		parent::setUp(); // TODO: Change the autogenerated stub
-
-		$this->recaptcha_invisible = new ReCaptchaBuilderInvisible('api_site_key', 'api_secret_key');
-		$this->recaptcha_v2 = new ReCaptchaBuilderV2('api_site_key', 'api_secret_key');
-		$this->recaptcha_v3 = new ReCaptchaBuilderV3('api_site_key', 'api_secret_key');
-	}
+        $this->recaptcha_invisible = new ReCaptchaBuilderInvisible('api_site_key', 'api_secret_key');
+        $this->recaptcha_v2 = new ReCaptchaBuilderV2('api_site_key', 'api_secret_key');
+        $this->recaptcha_v3 = new ReCaptchaBuilderV3('api_site_key', 'api_secret_key');
+    }
 }

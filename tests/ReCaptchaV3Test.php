@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright (c) 2017 - present
  * LaravelGoogleRecaptcha - ReCaptchaV3Test.php
@@ -16,70 +18,67 @@ use Biscolab\ReCaptcha\Facades\ReCaptcha;
 use Biscolab\ReCaptcha\ReCaptchaBuilderV3;
 use Illuminate\Support\Facades\App;
 
-/**
- * Class ReCaptchaV3Test
- * @package Biscolab\ReCaptcha\Tests
- */
 class ReCaptchaV3Test extends TestCase
 {
-
-    protected $recaptcha_v3 = null;
+    protected $recaptcha_v3;
 
     /**
      * @test
      */
-    public function testGetApiVersion()
+    public function testGetApiVersion(): void
     {
-
         $this->assertEquals($this->recaptcha_v3->getVersion(), 'v3');
     }
 
     /**
      * @test
      */
-    public function testAction()
+    public function testAction(): void
     {
-
-        $r = $this->recaptcha_v3->htmlScriptTagJsApi(['action' => 'someAction']);
+        $r = $this->recaptcha_v3->htmlScriptTagJsApi([
+            'action' => 'someAction',
+        ]);
         $this->assertMatchesRegularExpression('/someAction/', $r);
     }
 
     /**
      * @test
      */
-    public function testFetchCallbackFunction()
+    public function testFetchCallbackFunction(): void
     {
-
-        $r = $this->recaptcha_v3->htmlScriptTagJsApi(['callback_then' => 'functionCallbackThen']);
+        $r = $this->recaptcha_v3->htmlScriptTagJsApi([
+            'callback_then' => 'functionCallbackThen',
+        ]);
         $this->assertMatchesRegularExpression('/functionCallbackThen\(response\)/', $r);
     }
 
     /**
      * @test
      */
-    public function testcCatchCallbackFunction()
+    public function testcCatchCallbackFunction(): void
     {
-
-        $r = $this->recaptcha_v3->htmlScriptTagJsApi(['callback_catch' => 'functionCallbackCatch']);
+        $r = $this->recaptcha_v3->htmlScriptTagJsApi([
+            'callback_catch' => 'functionCallbackCatch',
+        ]);
         $this->assertMatchesRegularExpression('/functionCallbackCatch\(err\)/', $r);
     }
 
     /**
      * @test
      */
-    public function testCustomValidationFunction()
+    public function testCustomValidationFunction(): void
     {
-
-        $r = $this->recaptcha_v3->htmlScriptTagJsApi(['custom_validation' => 'functionCustomValidation']);
+        $r = $this->recaptcha_v3->htmlScriptTagJsApi([
+            'custom_validation' => 'functionCustomValidation',
+        ]);
         $this->assertMatchesRegularExpression('/functionCustomValidation\(token\)/', $r);
     }
 
     /**
      * @test
      */
-    public function testCustomValidationUrl()
+    public function testCustomValidationUrl(): void
     {
-
         $r = $this->recaptcha_v3->htmlScriptTagJsApi();
         $this->assertMatchesRegularExpression('/http:\/\/localhost\/my-custom-url\?my-custom-token-name/', $r);
     }
@@ -87,9 +86,8 @@ class ReCaptchaV3Test extends TestCase
     /**
      * @test
      */
-    public function testValidateController()
+    public function testValidateController(): void
     {
-
         $controller = App::make(ReCaptchaController::class);
         $return = $controller->validateV3();
 
@@ -100,18 +98,16 @@ class ReCaptchaV3Test extends TestCase
     /**
      * @test
      */
-    public function testCurlTimeoutIsSet()
+    public function testCurlTimeoutIsSet(): void
     {
-
         $this->assertEquals($this->recaptcha_v3->getCurlTimeout(), 3);
     }
 
     /**
      * @test
      */
-    public function testHtmlScriptTagJsApiCalledByFacade()
+    public function testHtmlScriptTagJsApiCalledByFacade(): void
     {
-
         ReCaptcha::shouldReceive('htmlScriptTagJsApi')
             ->once()
             ->with([]);
@@ -122,7 +118,7 @@ class ReCaptchaV3Test extends TestCase
     /**
      * @test
      */
-    public function testValidationUrlShouldBeMyCustomUrl()
+    public function testValidationUrlShouldBeMyCustomUrl(): void
     {
         $this->assertEquals($this->recaptcha_v3->getValidationUrl(), "http://localhost/my-custom-url");
     }
@@ -130,7 +126,7 @@ class ReCaptchaV3Test extends TestCase
     /**
      * @test
      */
-    public function testTokenParamNameShouldBeMyCustomTokenParamName()
+    public function testTokenParamNameShouldBeMyCustomTokenParamName(): void
     {
         $this->assertEquals($this->recaptcha_v3->getTokenParameterName(), "my-custom-token-name");
     }
@@ -138,21 +134,21 @@ class ReCaptchaV3Test extends TestCase
     /**
      * @test
      */
-    public function testValidationUrlShouldBeMyCustomValidationUrl()
+    public function testValidationUrlShouldBeMyCustomValidationUrl(): void
     {
-        $this->assertEquals($this->recaptcha_v3->getValidationUrlWithToken(), "http://localhost/my-custom-url?my-custom-token-name");
+        $this->assertEquals(
+            $this->recaptcha_v3->getValidationUrlWithToken(),
+            "http://localhost/my-custom-url?my-custom-token-name"
+        );
     }
 
     /**
      * Define environment setup.
      *
      * @param  \Illuminate\Foundation\Application $app
-     *
-     * @return void
      */
     protected function getEnvironmentSetUp($app)
     {
-
         $app['config']->set('recaptcha.version', 'v3');
         $app['config']->set('recaptcha.curl_timeout', 3);
 
@@ -165,8 +161,7 @@ class ReCaptchaV3Test extends TestCase
      */
     protected function setUp(): void
     {
-
-        parent::setUp(); // TODO: Change the autogenerated stub
+        parent::setUp();
         $this->recaptcha_v3 = new ReCaptchaBuilderV3('api_site_key', 'api_secret_key');
     }
 }

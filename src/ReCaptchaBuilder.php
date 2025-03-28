@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright (c) 2017 - present
  * LaravelGoogleRecaptcha - ReCaptchaBuilder.php
@@ -14,42 +16,37 @@ namespace Biscolab\ReCaptcha;
 use Illuminate\Support\Arr;
 use Symfony\Component\HttpFoundation\IpUtils;
 
-/**
- * Class ReCaptchaBuilder
- * @package Biscolab\ReCaptcha
- */
 class ReCaptchaBuilder
 {
-
     /**
      * @var string
      */
-    const DEFAULT_API_VERSION = 'v2';
+    public const DEFAULT_API_VERSION = 'v2';
 
     /**
      * @var int
      */
-    const DEFAULT_CURL_TIMEOUT = 10;
+    public const DEFAULT_CURL_TIMEOUT = 10;
 
     /**
      * @var string
      */
-    const DEFAULT_ONLOAD_JS_FUNCTION = 'biscolabOnloadCallback';
+    public const DEFAULT_ONLOAD_JS_FUNCTION = 'biscolabOnloadCallback';
 
     /**
      * @var string
      */
-    const DEFAULT_RECAPTCHA_RULE_NAME = 'recaptcha';
+    public const DEFAULT_RECAPTCHA_RULE_NAME = 'recaptcha';
 
     /**
      * @var string
      */
-    const DEFAULT_RECAPTCHA_FIELD_NAME = 'g-recaptcha-response';
+    public const DEFAULT_RECAPTCHA_FIELD_NAME = 'g-recaptcha-response';
 
     /**
      * @var string
      */
-    const DEFAULT_RECAPTCHA_API_DOMAIN = 'www.google.com';
+    public const DEFAULT_RECAPTCHA_API_DOMAIN = 'www.google.com';
 
     /**
      * The Site key
@@ -96,13 +93,6 @@ class ReCaptchaBuilder
      */
     protected $api_js_url = '';
 
-    /**
-     * ReCaptchaBuilder constructor.
-     *
-     * @param string      $api_site_key
-     * @param string      $api_secret_key
-     * @param null|string $version
-     */
     public function __construct(
         string $api_site_key,
         string $api_secret_key,
@@ -117,104 +107,58 @@ class ReCaptchaBuilder
         $this->setApiUrls();
     }
 
-    /**
-     * @param string $api_site_key
-     *
-     * @return ReCaptchaBuilder
-     */
     public function setApiSiteKey(string $api_site_key): ReCaptchaBuilder
     {
-
         $this->api_site_key = $api_site_key;
 
         return $this;
     }
 
-    /**
-     * @param string $api_secret_key
-     *
-     * @return ReCaptchaBuilder
-     */
     public function setApiSecretKey(string $api_secret_key): ReCaptchaBuilder
     {
-
         $this->api_secret_key = $api_secret_key;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getCurlTimeout(): int
     {
-
         return config('recaptcha.curl_timeout', self::DEFAULT_CURL_TIMEOUT);
     }
 
-    /**
-     * @param string $version
-     *
-     * @return ReCaptchaBuilder
-     */
     public function setVersion(string $version): ReCaptchaBuilder
     {
-
         $this->version = $version;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getVersion(): string
     {
-
         return $this->version;
     }
 
-    /**
-     * @param bool $skip_by_ip
-     *
-     * @return ReCaptchaBuilder
-     */
     public function setSkipByIp(bool $skip_by_ip): ReCaptchaBuilder
     {
-
         $this->skip_by_ip = $skip_by_ip;
 
         return $this;
     }
 
-    /**
-     * @param null|string $api_domain
-     *
-     * @return ReCaptchaBuilder
-     */
     public function setApiDomain(?string $api_domain = null): ReCaptchaBuilder
     {
-
         $this->api_domain = $api_domain ?? config('recaptcha.api_domain', self::DEFAULT_RECAPTCHA_API_DOMAIN);
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getApiDomain(): string
     {
-
         return $this->api_domain;
     }
 
-    /**
-     * @return ReCaptchaBuilder
-     */
     public function setApiUrls(): ReCaptchaBuilder
     {
-
         $this->api_url = 'https://' . $this->api_domain . '/recaptcha/api/siteverify';
         $this->api_js_url = 'https://' . $this->api_domain . '/recaptcha/api.js';
 
@@ -224,27 +168,19 @@ class ReCaptchaBuilder
     /**
      * @return array|mixed
      */
-    public function getIpWhitelist()
+    public function getIpWhitelist(): array
     {
-
         $whitelist = config('recaptcha.skip_ip', []);
 
         if (!is_array($whitelist)) {
             $whitelist = explode(',', $whitelist);
         }
 
-        $whitelist = array_map(function ($item) {
-
-            return trim($item);
-        }, $whitelist);
-
-        return $whitelist;
+        return array_map('trim', $whitelist);
     }
 
     /**
      * Checks whether the user IP address is among IPs "to be skipped"
-     *
-     * @return boolean
      */
     public function skipByIp(): bool
     {
@@ -254,24 +190,20 @@ class ReCaptchaBuilder
     /**
      * Write script HTML tag in you HTML code
      * Insert before </head> tag
-     *
-     * @param array|null $configuration
-     *
-     * @return string
-     * @throws \Exception
      */
     public function htmlScriptTagJsApi(?array $configuration = []): string
     {
-
         $query = [];
         $html = '';
 
         // Language: "hl" parameter
         // resources $configuration parameter overrides default language
         $language = Arr::get($configuration, 'lang');
+
         if (!$language) {
             $language = config('recaptcha.default_language', null);
         }
+
         if ($language) {
             Arr::set($query, 'hl', $language);
         }
@@ -287,29 +219,23 @@ class ReCaptchaBuilder
         }
 
         // Create query string
-        $query = ($query) ? '?' . http_build_query($query) : "";
-        $html .= "<script src=\"" . $this->api_js_url .  $query . "\" async defer></script>";
+        $query = ($query !== []) ? '?' . http_build_query($query) : "";
 
-        return $html;
+        return $html . ('<script src="' . $this->api_js_url . $query . '" async defer></script>');
     }
 
     /**
      * Call out to reCAPTCHA and process the response
-     *
-     * @param string $response
-     *
-     * @return boolean|array
      */
-    public function validate($response)
+    public function validate(string $response): bool|array
     {
-
         if ($this->skip_by_ip) {
             if ($this->returnArray()) {
                 // Add 'skip_by_ip' field to response
                 return [
                     'skip_by_ip' => true,
-                    'score'      => 0.9,
-                    'success'    => true
+                    'score' => 0.9,
+                    'success' => true,
                 ];
             }
 
@@ -317,7 +243,7 @@ class ReCaptchaBuilder
         }
 
         $params = http_build_query([
-            'secret'   => $this->api_secret_key,
+            'secret' => $this->api_secret_key,
             'remoteip' => request()->getClientIp(),
             'response' => $response,
         ]);
@@ -340,14 +266,15 @@ class ReCaptchaBuilder
             if ($this->returnArray()) {
                 // Add 'error' field to response
                 return [
-                    'error'   => 'cURL response empty',
-                    'score'   => 0.1,
-                    'success' => false
+                    'error' => 'cURL response empty',
+                    'score' => 0.1,
+                    'success' => false,
                 ];
             }
 
             return false;
         }
+
         $response = json_decode(trim($curl_response), true);
 
         if ($this->returnArray()) {
@@ -357,39 +284,23 @@ class ReCaptchaBuilder
         return $response['success'];
     }
 
-    /**
-     * @return string
-     */
     public function getApiSiteKey(): string
     {
-
         return $this->api_site_key;
     }
 
-    /**
-     * @return string
-     */
     public function getApiSecretKey(): string
     {
-
         return $this->api_secret_key;
     }
 
-    /**
-     * @return bool
-     */
     protected function returnArray(): bool
     {
-
-        return ($this->version == 'v3');
+        return ($this->version === 'v3');
     }
 
-    /**
-     * @return string
-     */
     public function getOnLoadCallback(): string
     {
-
         return "";
     }
 }

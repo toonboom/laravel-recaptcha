@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright (c) 2017 - present
  * LaravelGoogleRecaptcha - ReCaptchaHelpersV2ExplicitTest.php
@@ -15,13 +17,11 @@ use Biscolab\ReCaptcha\ReCaptchaBuilderV2;
 
 class ReCaptchaHelpersV2ExplicitTest extends TestCase
 {
-
     /**
      * @test
      */
-    public function testGetOnLoadCallbackFunction()
+    public function testGetOnLoadCallbackFunction(): void
     {
-
         $recaptcha = \recaptcha();
         /** @scrutinizer ignore-call */
         $callback = $recaptcha->getOnLoadCallback();
@@ -35,9 +35,8 @@ class ReCaptchaHelpersV2ExplicitTest extends TestCase
     /**
      * @test
      */
-    public function testHtmlScriptTagJsApiHasJavascriptRenderFunction()
+    public function testHtmlScriptTagJsApiHasJavascriptRenderFunction(): void
     {
-
         $html = htmlScriptTagJsApi();
 
         $this->assertEquals(
@@ -49,9 +48,8 @@ class ReCaptchaHelpersV2ExplicitTest extends TestCase
     /**
      * @test
      */
-    public function testTagAttributes()
+    public function testTagAttributes(): void
     {
-
         $recaptcha = \recaptcha();
         /** @scrutinizer ignore-call */
         $tag_attributes = $recaptcha->getTagAttributes();
@@ -76,20 +74,19 @@ class ReCaptchaHelpersV2ExplicitTest extends TestCase
     /**
      * @test
      */
-    public function testExpectReCaptchaInstanceOfReCaptchaBuilderV2()
+    public function testExpectReCaptchaInstanceOfReCaptchaBuilderV2(): void
     {
-
         $this->assertInstanceOf(ReCaptchaBuilderV2::class, \recaptcha());
     }
 
     /**
      * @test
      */
-    public function testHtmlFormSnippet()
+    public function testHtmlFormSnippet(): void
     {
-
         /** @scrutinizer ignore-call */
-        $html_snippet = \recaptcha()->htmlFormSnippet();
+        $html_snippet = \recaptcha()
+            ->htmlFormSnippet();
         $this->assertEquals(
             '<div class="g-recaptcha" data-callback="callbackFunction" data-error-callback="errorCallbackFunction" data-expired-callback="expiredCallbackFunction" data-sitekey="api_site_key" data-size="compact" data-tabindex="2" data-theme="dark" id="recaptcha-element"></div>',
             $html_snippet
@@ -100,22 +97,19 @@ class ReCaptchaHelpersV2ExplicitTest extends TestCase
      * Define environment setup.
      *
      * @param  \Illuminate\Foundation\Application $app
-     *
-     * @return void
      */
     protected function getEnvironmentSetUp($app)
     {
-
         $app['config']->set('recaptcha.api_site_key', 'api_site_key');
         $app['config']->set('recaptcha.version', 'v2');
         $app['config']->set('recaptcha.explicit', true);
         $app['config']->set('recaptcha.tag_attributes', [
-            'theme'            => 'dark',
-            'size'             => 'compact',
-            'tabindex'         => '2',
-            'callback'         => 'callbackFunction',
+            'theme' => 'dark',
+            'size' => 'compact',
+            'tabindex' => '2',
+            'callback' => 'callbackFunction',
             'expired-callback' => 'expiredCallbackFunction',
-            'error-callback'   => 'errorCallbackFunction',
+            'error-callback' => 'errorCallbackFunction',
         ]);
     }
 }

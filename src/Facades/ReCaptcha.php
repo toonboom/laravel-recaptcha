@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Copyright (c) 2017 - present
  * LaravelGoogleRecaptcha - ReCaptcha.php
@@ -13,9 +16,6 @@ namespace Biscolab\ReCaptcha\Facades;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * Class ReCaptcha
- * @package Biscolab\ReCaptcha\Facades
- *
  * @method static string htmlScriptTagJsApi(?array $config = [])
  * @method static string htmlFormButton(?string $button_label = '', ?array $properties = [])
  * @method static string htmlFormSnippet()
@@ -23,7 +23,6 @@ use Illuminate\Support\Facades\Facade;
  */
 class ReCaptcha extends Facade
 {
-
     /**
      * Get the registered name of the component.
      *
@@ -31,7 +30,6 @@ class ReCaptcha extends Facade
      */
     protected static function getFacadeAccessor()
     {
-
         return 'recaptcha';
     }
 }

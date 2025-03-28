@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Copyright (c) 2017 - present
  * LaravelGoogleRecaptcha - TestCase.php
@@ -14,38 +17,31 @@ use Biscolab\ReCaptcha\Facades\ReCaptcha;
 use Biscolab\ReCaptcha\ReCaptchaServiceProvider;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
-/**
- * Class TestCase
- * @package Biscolab\ReCaptcha\Tests
- */
 class TestCase extends OrchestraTestCase
 {
+    /**
+     * Load package alias
+     *
+     * @param  \Illuminate\Foundation\Application $app
+     *
+     * @return array
+     */
+    protected function getPackageAliases($app)
+    {
+        return [
+            'ReCaptcha' => ReCaptcha::class,
+        ];
+    }
 
-	/**
-	 * Load package alias
-	 *
-	 * @param  \Illuminate\Foundation\Application $app
-	 *
-	 * @return array
-	 */
-	protected function getPackageAliases($app)
-	{
-
-		return [
-			'ReCaptcha' => ReCaptcha::class,
-		];
-	}
-
-	/**
-	 * Load package service provider
-	 *
-	 * @param \Illuminate\Foundation\Application $app
-	 *
-	 * @return array
-	 */
-	protected function getPackageProviders($app)
-	{
-
-		return [ReCaptchaServiceProvider::class];
-	}
+    /**
+     * Load package service provider
+     *
+     * @param \Illuminate\Foundation\Application $app
+     *
+     * @return array
+     */
+    protected function getPackageProviders($app)
+    {
+        return [ReCaptchaServiceProvider::class];
+    }
 }

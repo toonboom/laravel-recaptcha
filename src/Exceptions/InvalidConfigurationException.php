@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Copyright (c) 2017 - present
  * LaravelGoogleRecaptcha - InvalidConfigurationException.php
@@ -12,5 +15,4 @@ namespace Biscolab\ReCaptcha\Exceptions;
 
 class InvalidConfigurationException extends \Exception
 {
-
 }

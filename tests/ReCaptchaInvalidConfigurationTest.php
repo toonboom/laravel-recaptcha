@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Copyright (c) 2017 - present
  * LaravelGoogleRecaptcha - ReCaptchaInvalidConfigurationTest.php
@@ -13,19 +16,13 @@ namespace Biscolab\ReCaptcha\Tests;
 use Biscolab\ReCaptcha\Exceptions\InvalidConfigurationException;
 use Biscolab\ReCaptcha\ReCaptchaBuilder;
 
-/**
- * Class ReCaptchaInvalidConfigurationTest
- * @package Biscolab\ReCaptcha\Tests
- */
 class ReCaptchaInvalidConfigurationTest extends TestCase
 {
-
     /**
      * @test
      */
-    public function testV2HtmlScriptTagJsApiThrowsInvalidConfigurationException()
+    public function testV2HtmlScriptTagJsApiThrowsInvalidConfigurationException(): void
     {
-
         $this->expectException(InvalidConfigurationException::class);
 
         htmlScriptTagJsApi();
@@ -35,16 +32,12 @@ class ReCaptchaInvalidConfigurationTest extends TestCase
      * Define environment setup.
      *
      * @param  \Illuminate\Foundation\Application $app
-     *
-     * @return void
      */
     protected function getEnvironmentSetUp($app)
     {
-
         $app['config']->set('recaptcha.api_site_key', 'api_site_key');
         $app['config']->set('recaptcha.api_secret_key', 'api_secret_key');
         $app['config']->set('recaptcha.explicit', true);
         $app['config']->set('recaptcha.tag_attributes.callback', ReCaptchaBuilder::DEFAULT_ONLOAD_JS_FUNCTION);
     }
-
 }
