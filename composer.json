@@ -1,57 +1,78 @@
 {
-    "name": "biscolab/laravel-recaptcha",
+    "name": "toonboom/laravel-recaptcha",
     "description": "Simple and painless Google reCAPTCHA package for Laravel framework",
     "license": "MIT",
     "type": "library",
-    "keywords": [
+    "keywords":
+    [
         "recaptcha",
         "captcha",
         "laravel",
         "validation"
     ],
     "homepage": "https://biscolab.com/laravel-recaptcha",
-    "authors": [
+    "authors":
+    [
         {
             "name": "Roberto Belotti",
             "email": "roby.belotti@gmail.com",
             "homepage": "https://biscolab.com",
             "role": "Developer"
+        },
+        {
+            "name": "Jacob",
+            "homepage": "https://github.com/jacob1237",
+            "role": "Developer"
+        },
+        {
+            "name": "Jerome Arfouche",
+            "homepage": "https://github.com/hemorej",
+            "role": "Developer"
         }
     ],
-    "require": {
+    "require":
+    {
         "php": "^7.3|^8.0",
         "illuminate/routing": "^7.0|^8.0|^9.0|^10.0|^11.0|^12.0",
         "illuminate/support": "^7.0|^8.0|^9.0|^10.0|^11.0|^12.0"
     },
-    "require-dev": {
+    "require-dev":
+    {
         "orchestra/testbench": "5.*|6.*|^7.0|^8.0|^9.0",
         "phpunit/phpunit": "^9.1|^10.5|^11.0"
     },
-    "autoload": {
-        "psr-4": {
+    "autoload":
+    {
+        "psr-4":
+        {
             "Biscolab\\ReCaptcha\\": "src/"
         },
-        "files": [
+        "files":
+        [
             "src/helpers.php"
         ]
     },
-    "autoload-dev": {
-        "psr-4": {
+    "autoload-dev":
+    {
+        "psr-4":
+        {
             "Biscolab\\ReCaptcha\\Tests\\": "tests/"
         }
     },
-    "scripts": {
+    "scripts":
+    {
         "test": "vendor/bin/phpunit --colors=always"
     },
-    "suggest": {
-        "biscolab/laravel-authlog": "It allows to handle logged-in users and force log-out if needed"
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
+    "extra":
+    {
+        "laravel":
+        {
+            "providers":
+            [
                 "Biscolab\\ReCaptcha\\ReCaptchaServiceProvider"
             ],
-            "aliases": {
+            "aliases":
+            {
                 "ReCaptcha": "Biscolab\\ReCaptcha\\Facades\\ReCaptcha"
             }
         }
