@@ -227,7 +227,7 @@ class ReCaptchaBuilder
     /**
      * Call out to reCAPTCHA and process the response
      */
-    public function validate(string $response): bool|array
+    public function validate(?string $response): bool|array
     {
         if ($this->skip_by_ip) {
             if ($this->returnArray()) {
